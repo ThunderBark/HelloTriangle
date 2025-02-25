@@ -13,11 +13,50 @@
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
+const std::vector<const char*> validationLayers = {
+    "VK_LAYER_KHRONOS_validation"
+};
 
+
+/// \brief 
 struct ctx_t {
     GLFWwindow* window;
+    
     VkInstance instance;
+
+#ifdef NDEBUG
+    const bool enableValidationLayers = false;
+#else
+    const bool enableValidationLayers = true;
+#endif //NDEBUG
 };
+
+
+/// \brief 
+/// \return 
+static inline
+bool checkValidationLayerSupport() {
+    uint32_t layerCount;
+    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+    std::vector<VkLayerProperties> availableLayers(layerCount);
+    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+    for (const char* layerName : validationLayers) {
+        if (std::find_if(
+                availableLayers.begin(),
+                availableLayers.end(),
+                [&](VkLayerProperties& layerProperties) {
+                    return layerProperties.layerName == std::string(layerName);
+                }    
+            ) == availableLayers.end()
+        ) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 HelloTriangleApp::HelloTriangleApp():
     ctx(new ctx_t) {}
@@ -40,6 +79,11 @@ void HelloTriangleApp::initWindow() {
 }
 
 void HelloTriangleApp::createInstance() {
+    // Check validation layer support if requested
+    if (ctx->enableValidationLayers && !checkValidationLayerSupport()) {
+        throw std::runtime_error("Validation layers requested, but not available!");
+    }
+
     // Optional but useful application info
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -90,7 +134,14 @@ void HelloTriangleApp::createInstance() {
     createInfo.pApplicationInfo = &appInfo;
     createInfo.enabledExtensionCount = glfwExtensionCount;
     createInfo.ppEnabledExtensionNames = glfwExtensions;
-    createInfo.enabledLayerCount = 0;
+    // Provide validation layers if requested
+    if (ctx->enableValidationLayers) {
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+    }
+    else {
+        createInfo.enabledLayerCount = 0;
+    }
 
     // Create vulkan instance
     VkResult res = vkCreateInstance(&createInfo, nullptr, &ctx->instance);
