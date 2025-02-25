@@ -4,14 +4,14 @@
 #include <HelloTriangleApp.hpp>
 
 
-int main() {
+int main( ) {
     HelloTriangleApp app;
 
     try {
-        app.run();
+        app.run( );
     }
     catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what( ) << std::endl;
         return EXIT_FAILURE;
     }
 

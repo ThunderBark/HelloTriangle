@@ -35,21 +35,21 @@ struct ctx_t {
 /// \brief 
 /// \return 
 static inline
-bool checkValidationLayerSupport() {
+bool checkValidationLayerSupport( ) {
     uint32_t layerCount;
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
     std::vector<VkLayerProperties> availableLayers(layerCount);
-    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data( ));
 
     for (const char* layerName : validationLayers) {
         if (std::find_if(
-                availableLayers.begin(),
-                availableLayers.end(),
+                availableLayers.begin( ),
+                availableLayers.end( ),
                 [&](VkLayerProperties& layerProperties) {
                     return layerProperties.layerName == std::string(layerName);
                 }    
-            ) == availableLayers.end()
+            ) == availableLayers.end( )
         ) {
             return false;
         }
@@ -58,16 +58,16 @@ bool checkValidationLayerSupport() {
     return true;
 }
 
-HelloTriangleApp::HelloTriangleApp():
+HelloTriangleApp::HelloTriangleApp( ):
     ctx(new ctx_t) {}
 
-HelloTriangleApp::~HelloTriangleApp() {
+HelloTriangleApp::~HelloTriangleApp( ) {
     delete ctx;
 }
 
 
-void HelloTriangleApp::initWindow() {
-    glfwInit();
+void HelloTriangleApp::initWindow( ) {
+    glfwInit( );
 
     // Do not create OpenGl context
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -78,9 +78,9 @@ void HelloTriangleApp::initWindow() {
     ctx->window = glfwCreateWindow(WIDTH, HEIGHT, "Hello Triangle", nullptr, nullptr);
 }
 
-void HelloTriangleApp::createInstance() {
+void HelloTriangleApp::createInstance( ) {
     // Check validation layer support if requested
-    if (ctx->enableValidationLayers && !checkValidationLayerSupport()) {
+    if (ctx->enableValidationLayers && !checkValidationLayerSupport( )) {
         throw std::runtime_error("Validation layers requested, but not available!");
     }
 
@@ -104,7 +104,7 @@ void HelloTriangleApp::createInstance() {
     uint32_t extensionCount;
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
     std::vector<VkExtensionProperties> extensions(extensionCount);
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data( ));
     std::cout << "Available extensions: " << std::endl;
     for (const auto& extension : extensions) {
         std::cout << '\t' << extension.extensionName << std::endl;
@@ -114,12 +114,12 @@ void HelloTriangleApp::createInstance() {
     // Check if all required extensions for glfw is present
     for (uint32_t i = 0; i < glfwExtensionCount; ++i) {
         if (std::find_if(
-                extensions.begin(),
-                extensions.end(),
+                extensions.begin( ),
+                extensions.end( ),
                 [&](const VkExtensionProperties p) {
                     return p.extensionName == std::string(glfwExtensions[i]);
                 }
-            ) == extensions.end()
+            ) == extensions.end( )
         ) {
             throw std::runtime_error(
                 "Can't find extension required for glfw: " +
@@ -136,8 +136,8 @@ void HelloTriangleApp::createInstance() {
     createInfo.ppEnabledExtensionNames = glfwExtensions;
     // Provide validation layers if requested
     if (ctx->enableValidationLayers) {
-        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-        createInfo.ppEnabledLayerNames = validationLayers.data();
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size( ));
+        createInfo.ppEnabledLayerNames = validationLayers.data( );
     }
     else {
         createInfo.enabledLayerCount = 0;
@@ -153,19 +153,19 @@ void HelloTriangleApp::createInstance() {
     }
 }
 
-void HelloTriangleApp::initVulkan() {
-    createInstance();
+void HelloTriangleApp::initVulkan( ) {
+    createInstance( );
 }
 
-void HelloTriangleApp::mainLoop() {
+void HelloTriangleApp::mainLoop( ) {
     while (!glfwWindowShouldClose(ctx->window)) {
-        glfwPollEvents();
+        glfwPollEvents( );
     }
 }
 
-void HelloTriangleApp::cleanup() {
+void HelloTriangleApp::cleanup( ) {
     vkDestroyInstance(ctx->instance, nullptr);
 
     glfwDestroyWindow(ctx->window);
-    glfwTerminate();
+    glfwTerminate( );
 }

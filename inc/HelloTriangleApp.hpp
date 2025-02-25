@@ -1,25 +1,25 @@
 class HelloTriangleApp {
 public:
-    HelloTriangleApp();
-    ~HelloTriangleApp();
+    HelloTriangleApp( );
+    ~HelloTriangleApp( );
 
-    void run() {
-        initWindow();
-        initVulkan();
-        mainLoop();
-        cleanup();
+    void run( ) {
+        initWindow( );
+        initVulkan( );
+        mainLoop( );
+        cleanup( );
     }
 
 private:
-    void initWindow();
+    void initWindow( );
 
-    void createInstance();
+    void createInstance( );
 
-    void initVulkan();
+    void initVulkan( );
 
-    void mainLoop();
+    void mainLoop( );
 
-    void cleanup();
+    void cleanup( );
 
 private:
     struct ctx_t* ctx;
